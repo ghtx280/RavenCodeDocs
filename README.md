@@ -15,11 +15,6 @@ $cmd // 'foo'
 $args // ['1', '2', '3']
 ```
 
-Початковий виконуваний файл `srting`
-```js
-$index // 'foo/0.js'
-```
-
 Дані про користувача `object`
 ```js
 $member
@@ -102,7 +97,7 @@ await $store.member('money').get() // 900
 await $store.global('money').get() // 300
 ```
 
-Зміна даних (однаково для member та global)
+Зміна даних (**Далі однаково для member та global**)
 ```js
 await $store.global('money').set(500) // оновити значення (якщо такого поля немає то воно створиться) 
 await $store.global('money').set(null) // видалити значення (якщо такого поля немає поверне false) 
@@ -145,11 +140,11 @@ await $store.mention(1, 'money').get() // 500
 Оновити дані згаданого користувача
 ```js
 await $store.mention(0, 'money').set(200) // true якщо оновилося успішно
-await $store.mention(1, 'money')set(400) // false якщо помилка оновилося успішно
+await $store.mention(1, 'money').set(400) // false якщо помилка оновилося успішно
 ```
 
 Отримати дані кожного згаданого користувача згідно з масивом (лише для читання)
 ```js
-await $store.mention(['money', 'money']) // [200, 400]
+await $store.mention(['money', 'money']).get() // [200, 400]
 ```
 
