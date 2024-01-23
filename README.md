@@ -111,6 +111,14 @@ $arguments.before(2)  // ["123", "hello"]
 $arguments.after(2)  // ["hello", "555", "foo"]
 ```
 
+### $timeout
+Просто призупиняє код на заданий час, від 1с до 60с
+```js
+$send.message("hello")
+await $timeout(5) 
+$send.message("5 seconds have passed")
+```
+
 ### $button
 Ви можете створити кнопку таким чином
 ```js
