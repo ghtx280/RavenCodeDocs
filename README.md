@@ -1,110 +1,110 @@
-RavenCore - це бот якого можна запрограмувати на мові `JavaScript`. Просто додайте бота на свій сервер, додайте команду та запрограмуйте її.
+RavenCore - is a bot that can be programmed in `JavaScript`. Just add the bot to your server, add a command, and program it.
 
 ---
 
-Термінологія:
-- index (індекс) - початковий файл який виконує команду
-- action (екшн) - файл де ви пишете код
-- member (мембер) - учасник сервера.
-- guild (гільдія) - сам сервер, та все що з ним повязано.
-- channel (канал) - канал, в якому надістали повідомлення, або будь який інший канал на сервері.
-- owner (овнер) - власник сервера
+Terminology:
+- index - the initial file that executes the command
+- action - a file where you write code
+- member - a server member
+- guild - the server itself and everything related to it
+- channel - the channel where the message was sent or any other channel on the server
+- owner - the server owner
 
-## ЕКШН
-На одну команду ви можете використовувати тільки 1 екшн, `index` його не можна змінити або видалити.   
-Також ви можете додати інші екшени із власними назвами (їх можна видаляти).   
-В них можна перенести частину коду щоб розбити його на кусоки та не засмічувати `index`
-Використовуйте `$import("actionName")` щоб імпортувати код з іншого екшену, але в тому екшені має бути `return someData`
-Екшн являє собою асинхронну функцію, тому ви можете використовувати `await` та `return` на верхньому рівні
+## ACTION
+For one command, you can use only 1 action, `index` cannot be changed or deleted.
+You can also add other actions with their own names (they can be deleted).
+In them, you can move part of the code to break it into chunks and not clutter `index`.
+Use `$import("actionName")` to import code from another action, but in that action there must be `return someData`.
+An action is an asynchronous function, so you can use `await` and `return` at the top level.
 
 ---
 
-## ЗМІННІ:
+## VARIABLES:
 
-Повний текст команди `srting`
+Full text of the command `string`
 ```js
 $content // '!foo 1 2 3'
 ```
 
-Поточна викликана команда `srting`
+The current command being called `string`
 ```js
 $cmd // 'foo'
 ```
 
-Параметри які йдуть після команди `array`
+Parameters that follow the command `array`
 ```js
 $args // ['1', '2', '3']
 ```
 
-Дані про користувача `object`
+User data `object`
 ```js
 $member
 ```
 
-Дані про канал `object`
+Channel data `object`
 ```js
 $channel
 ```
 
-Дані про сервер `object`
+Server data `object`
 ```js
 $guild
 ```
 
-Дані про поточне повідомлення `object`
+Current message data `object`
 ```js
 $message
 ```
 
 
 
-## ФУНКЦІЇ:
+## FUNCTIONS:
 
-### Надсилання повідомлення
+### Sending a message
 
-Щоб надіслати звичайне повідомлення, використовуйте
+To send a regular message, use
 ```js
 $send.message("hello")
 ```
 
-Щоб зробити відповідь
+To reply
 ```js
 $send.reply("hello")
 ```
-або можете просто використати
+or you can simply use
 ```js
 return "hello"
 ```
-Якщо ви щось повертаєте з екшена, то це зробить відповідь, якщо буде falsy то нічого не відправиться   
-Також можна надіслати разом з ембедами та компонентами
+If you return something from the action, it will reply. If it's falsy, nothing will be sent.
+You can also send it together with embeds and components
 ```js
 $send.reply("hello", [[btn]], { embeds: [embed] })
-// або
+// or
 return [ "hello", [[btn]], { embeds: [embed] } ]
 ```
-Використовуючи $send.message() або $send.reply() ви можете почекати доки повідомлення надішлеться, а потім з ним щось зробити, наприклад його можна відредагувати або видалити
+Using $send.message() or $send.reply() you can wait for the message to be sent, and then do something with it, for example, you can edit or delete it
 ```js
 let msg = await $send.reply("hello")
 await $timeout(2) // wait 2 seconds
 msg.$edit("bye")
 ```
-\*ви можете використовувати await на верхньому рівну, тому що екшн являє собою асинхронну функцію
-Цей код надішле відповіть "hello", та через 2 секунди, змінить її на "bye"    
-Доступні такі методи, `msg.$edit()`, `msg.$delete()` та `msg.$reply()`
+*you can use await at the top level, because the action is an asynchronous function
+This code will send a reply "hello", and after 2 seconds, change it to "bye"
+Available methods are `msg.$edit()`, `msg.$delete()` and `msg.$reply()`
 
 
 
 ### $arguments
-Аргументи команди, тобто додаткові значення після !cmd arg1 arg2 ... argN
-Це по суті те саме що $args але зручніше, наприклад така команда !sum 2 3
+Command arguments, i.e. additional values after !cmd arg1 arg2 ... argN
+This is essentially the same as $args but more convenient, for example a command !sum 2 3
 ```js
 let a1 = $arguments.get(1)
 let a2 = $arguments.get(2)
 
 a1 + a2 // 5
 ```
-Ми отримали саме 5, тому що функція $arguments.get(N) перетворює в число якщо це можливо, в іншому випадку буде рядок (string)   
-Є ще інші додаткові функції, якщо команда буде !test 123 hello 555 foo 
+We got 5 because the function $arguments.get(N) converts to a number if possible, otherwise it will be a string
+There are some other additional functions, if the command is !test 123 hello 555 foo
 ```js
 $arguments.range(2, 3) // ["hello", "555"]
 $arguments.before(2)  // ["123", "hello"]
@@ -112,7 +112,7 @@ $arguments.after(2)  // ["hello", "555", "foo"]
 ```
 
 ### $timeout
-Просто призупиняє код на заданий час, від 1с до 60с
+Simply pauses the code for a given time, from 1s to 60s
 ```js
 $send.message("hello")
 await $timeout(5) 
@@ -120,7 +120,7 @@ $send.message("5 seconds have passed")
 ```
 
 ### $button
-Ви можете створити кнопку таким чином
+You can create a button like this
 ```js
 let btn = $button({
     text: "Say hello",
@@ -129,31 +129,31 @@ let btn = $button({
 
 $send.message("test", [[btn]])
 ```
-Після чого ви побачите повідомлення "test" з кнопкою "Say hello", якщо на неї нажати то бот відповість "hello"
-`[[btn]]` Кнопки записуються в 2 вимірному масиві, тому що можна зробити декілька рядів
+After that, you will see the message "test" with a button "Say hello", if you click on it, the bot will reply "hello"
+`[[btn]]` Buttons are written in a 2-dimensional array, because you can make multiple rows
 
- ```js
+```js
 [
     [btn1, btn2, btn3],
     [btn4, btn5, btn6],
 ]
 ```
-Як ви бачили в кнопки є параметр `action`, це код який виконається при натисканні кнопки, в нього ви можете передати функцію або рядок.   
-- `action: "actionName"` Якщо передати рядок, це автоматичний імпорт з іншого екшену, всеодно що `action: $import("actionName")`, тому в `actionName` потрібно повернути функцію
+As you saw, the button has a parameter `action`, this is the code that will be executed when the button is clicked, you can pass a function or a string to it.
+- `action: "actionName"` If you pass a string, this is an automatic import from another action, the same as `action: $import("actionName")`, so in `actionName` you need to return a function
 ```js
 // actionName
 return ({ $reply }) => $reply("the button is pressed")
 ```
-- Або можна просто передати функцію
+- Or you can simply pass a function
 ```js
 action: ({ $reply }) => $reply("the button is pressed")
 ```
 
 
 ### $import
-Імпортує дані з іншого файлу та опціонально передає параметри   
-!!! Застереження. При імпорті файлу, весь код який там є, виконається.
-Рекомендується використовувати лише функції та змінні, щоб не було проблем
+Imports data from another file and optionally passes parameters
+!!! Warning. When importing a file, all the code in it will be executed.
+It is recommended to use only functions and variables to avoid issues
 
 ```js
 // index
@@ -172,16 +172,16 @@ return {
 
 
 ### $random
-Отримати випадкове число чи елемент масиву
+Get a random number or array element
 ```js
-$random(10) // Від 0 до 10
-$random(5, 15) // Від 5 до 15
-$random([1, 2, 3, 4, 5]) // З масиву
-$random(['a', 'b', 'c'], [20, 50, 30]) // З ймовірністю у %
+$random(10) // From 0 to 10
+$random(5, 15) // From 5 to 15
+$random([1, 2, 3, 4, 5]) // From an array
+$random(['a', 'b', 'c'], [20, 50, 30]) // With probability in %
 ```
 
 ### $range
-Створити проміжок, тобто масив, зручно використовувати в for of
+Create a range, i.e. an array, convenient to use in for of
 ```js
 $range(5) // [1, 2, 3, 4, 5]
 $range(2, 6) // [2, 3, 4, 5, 6]
@@ -192,67 +192,67 @@ $range(1, 10, 2) // [1, 3, 5, 7, 9]
 
 
 
-## СХОВИЩЕ
+## STORAGE
 
-Сховище являє собою просту базу данних {ключ: значення}
+The storage is a simple key-value database {key: value}
 
-Отримати дані про поточного користувача
+Get data about the current user
 ```js
 await $store.member('money').get() // 900
 ```
 
-Отримати загальні дані відносто сервера
+Get global data relative to the server
 ```js
 await $store.global('money').get() // 300
 ```
 
-Зміна даних (**Далі однаково для member та global**)
+Changing data (**The same for member and global below**)
 ```js
-await $store.global('money').set(500) // оновити значення (якщо такого поля немає то воно створиться) 
-await $store.global('money').set(null) // видалити значення (якщо такого поля немає поверне false) 
+await $store.global('money').set(500) // update the value (if the field does not exist, it will be created)
+await $store.global('money').set(null) // delete the value (if the field does not exist, it will return false)
 ```
 
-### Операція зміни чисел
+### Number change operation
 ```js
-// додати до поточного значення
-await $store.global('money').inc(50) // Якщо було 500 то стане 550
+// add to the current value
+await $store.global('money').inc(50) // If it was 500, it will become 550
 
-// відняти від поточного значення
-await $store.global('money').dec(50) // Якщо було 500 то стане 450
+// subtract from the current value
+await $store.global('money').dec(50) // If it was 500, it will become 450
 ```
 
-### Зміна масиву
+### Array modification
 ```js
-// додати нове значення до масиву 'roles'
+// add a new value to the 'roles' array
 await $store.global('roles').push('admin')
 
-// видалити значення 'admin' з масиву 'roles'
+// remove the value 'admin' from the 'roles' array
 await $store.global('roles').delete('admin')
 
-// замінити 'admin' на 'user' у масиві 'roles'
+// replace 'admin' with 'user' in the 'roles' array
 await $store.global('roles').replace('admin', 'user')
 
-// перевірка, чи є 'user' у масиві 'roles', повертне true або false
+// check if 'user' is in the 'roles' array, returns true or false
 await $store.global('roles').has('user')
 
 ```
 
 
-### !!! mention знаходиться в розробці, тому поки недоступний
+### !!! mention is under development, so it is not available yet
 
-Отримати дані про згаданого користувача за індексом
+Get data about the mentioned user by index
 ```js
 await $store.mention(0, 'money').get() // 800
 await $store.mention(1, 'money').get() // 500
 ```
 
-Оновити дані згаданого користувача
+Update data of the mentioned user
 ```js
-await $store.mention(0, 'money').set(200) // true якщо оновилося успішно
-await $store.mention(1, 'money').set(400) // false якщо помилка оновилося успішно
+await $store.mention(0, 'money').set(200) // true if updated successfully
+await $store.mention(1, 'money').set(400) // false if updated successfully
 ```
 
-Отримати дані кожного згаданого користувача згідно з масивом (лише для читання)
+Get data of each mentioned user according to the array (read-only)
 ```js
 await $store.mention(['money', 'money']).get() // [200, 400]
 ```
